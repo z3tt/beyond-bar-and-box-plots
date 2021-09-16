@@ -17,7 +17,7 @@
 
 Slides and hands-on codes for my talk at the [USGS Community for Data Integration](https://twitter.com/USGS_CDI) and [USGS Data Science Team](https://www.usgs.gov/mission-areas/water-resources/science/data-science-water-resources?qt-science_center_objects=0#qt-science_center_objects) on September, 16 2021.
 
-![Title slide for my talk](https://raw.githubusercontent.com/z3tt/beyond-bars-and-box-plots/main/img/title.png)
+![Title slide for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/title.png)
 
 ### Talk Resources:
 
@@ -30,7 +30,7 @@ Slides and hands-on codes for my talk at the [USGS Community for Data Integratio
 <a href="https://www.buymeacoffee.com/z3tt" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 <br><br>
 
-![Teaser for my talk](https://raw.githubusercontent.com/z3tt/beyond-bars-and-box-plots/main/img/teaser.png)
+![Teaser for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/teaser.png)
  
 ***
 
