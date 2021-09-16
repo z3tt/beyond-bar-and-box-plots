@@ -56,8 +56,9 @@ theme_update(
                              margin = margin(t = 6)),
   axis.text.y = element_text(color = "black", size = 22, hjust = 1, 
                              margin = margin(r = 6), family = "Roboto Mono"),
-  panel.grid.major.y = element_line(color = "grey90", size = .6),
   axis.line.x = element_line(color = "black", size = 1),
+  panel.grid.major.y = element_line(color = "grey90", size = .6),
+  plot.background = element_rect(fill = "white", color = "white"),
   plot.margin = margin(rep(20, 4))
 )
 
@@ -96,10 +97,7 @@ ggplot(data, aes(x = group, y = value, fill = group)) +
 ggplot(data, aes(x = group, fill = group)) +
   geom_bar(width = .8) +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_manual(values = my_pal, guide = "none") + 
-  labs(y = "Number of observations") +
-  theme(axis.title.y = element_text(color = "black", face = "bold", size = 26, 
-                                    margin = margin(r = 15), angle = 90))
+  scale_fill_manual(values = my_pal, guide = "none")
 ```
 
 ### Dynamite Plot
@@ -117,10 +115,7 @@ ggplot(data, aes(x = group, y = value, color = group, fill = group)) +
   geom_bar(stat = "summary", width = .8, size = .8) +
   scale_y_continuous(expand = c(0, 0), breaks = 1:9) +
   scale_fill_manual(values = my_pal, guide = "none") +
-  scale_color_manual(values = my_pal, guide = "none") + 
-  labs(y = "Mean value") +
-  theme(axis.title.y = element_text(color = "black", face = "bold", size = 26, 
-                                    margin = margin(r = 15), angle = 90))
+  scale_color_manual(values = my_pal, guide = "none")
 ```
 
 ### Boxplot
@@ -263,16 +258,16 @@ g_ridges +
 ```
 
 ```{r ridgeline-quartiles}
+q_pal <- colorspace::lighten(rcartocolor::carto_pal(n = 4, name = "Geyser")[c(2, 1, 4, 3)], .6)
+#q_pal <- colorspace::adjust_transparency(rcartocolor::carto_pal(n = 4, name = "Tropic")[c(2, 1, 4, 3)], alpha = .7)
+
 g_ridges + 
   ggridges::stat_density_ridges(
     aes(fill = factor(stat(quantile))),
-    geom = "density_ridges_gradient", calc_ecdf = TRUE,
-    quantiles = 4, 
-    color = "black", alpha = .8, size = 1
+    geom = "density_ridges_gradient", calc_ecdf = TRUE, quantiles = 4, 
+    color = "black", size = 1
   ) +
-  rcartocolor::scale_fill_carto_d(
-    palette = "Geyser", name = "Quartile:"
-  ) +
+  scale_fill_manual(values = q_pal, name = "Quartile:") +
   guides(fill = guide_legend(override.aes = list(color = "transparent")))
 ```
 
