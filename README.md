@@ -1,5 +1,6 @@
 <h1 align="center">
-  &nbsp;
+  &nbsp;Beyond Bar and Box Plots&nbsp;
+</h1>
 
 <div align="center">
 
@@ -21,7 +22,7 @@ Slides and hands-on codes for my talk at the [USGS Community for Data Integratio
 ### Talk Resources:
 
 * [Slides](https://www.cedricscherer.com/slides/USGS-2021-beyond-bar-and-box-plots.pdf)
-* [Recording]() **TBA**
+* Recording **TBA**
 * [Hands-On Tutorial](https://z3tt.github.io/beyond-bar-and-box-plots/)
 * [Codes](https://github.com/z3tt/beyond-bars-and-box-plots/blob/main/R/BeyondBarAndBoxPlots.Rmd)
 
