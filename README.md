@@ -22,13 +22,15 @@ Slides and hands-on codes for my talk at the [USGS Community for Data Integratio
 ### Talk Resources:
 
 * [Slides](https://www.cedricscherer.com/slides/USGS-2021-beyond-bar-and-box-plots.pdf)
-* Recording **TBA**
 * [Hands-On Tutorial](https://z3tt.github.io/beyond-bar-and-box-plots/)
 * [Codes](https://github.com/z3tt/beyond-bars-and-box-plots/blob/main/R/BeyondBarAndBoxPlots.Rmd)
+* Recording **TBA**
 
 <br>
 <a href="https://www.buymeacoffee.com/z3tt" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 <br><br>
+
+![Teaser for my talk](https://raw.githubusercontent.com/z3tt/beyond-bars-and-box-plots/main/img/teaser.png)
  
 ***
 
