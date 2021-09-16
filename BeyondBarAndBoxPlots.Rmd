@@ -1,0 +1,705 @@
+---
+title: "Beyond Bar and Box Plots" 
+description: |
+    Hands–on code to create and style chart alternatives with ggplot2
+author:
+    - name: "Cédric Scherer"
+      url: https://cedricscherer.com
+date: "`r Sys.Date()`"
+output: 
+    distill::distill_article:
+        highlight: kate
+        code_folding: false  
+        toc: true            
+        toc_depth: 2         
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, 
+                      dev = "ragg_png", res = 600, retina = 2,
+                      fig.width = 15, fig.height = 8.5)
+Sys.setlocale("LC_TIME", "C")
+```
+
+
+## Packages
+
+```{r packages}
+library(tidyverse)     ## data wrangling + ggplot2
+library(fGarch)        ## data simulation
+library(systemfonts)   ## custom fonts
+library(colorspace)    ## adjust colors
+library(RColorBrewer)  ## ColorBrewer palettes
+library(rcartocolor)   ## Carto palettes
+library(ggforce)       ## sina plots
+library(ggdist)        ## halfeye plots
+library(ggridges)      ## ridgeline plots
+library(ggbeeswarm)    ## beeswarm plots
+library(gghalves)      ## off-set jitter
+```
+
+
+## Import Data
+
+```{r data}
+url <- "https://raw.githubusercontent.com/z3tt/DataViz-Teaching/master/data/weissgerber-data.csv"
+data <- read_csv(url)
+```
+
+
+## ggplot2 Setup
+
+```{r}
+theme_set(theme_void(base_family = "Roboto"))
+
+theme_update(
+  axis.text.x = element_text(color = "black", face = "bold", size = 26, 
+                             margin = margin(t = 6)),
+  axis.text.y = element_text(color = "black", size = 22, hjust = 1, 
+                             margin = margin(r = 6), family = "Roboto Mono"),
+  panel.grid.major.y = element_line(color = "grey90", size = .6),
+  axis.line.x = element_line(color = "black", size = 1),
+  plot.margin = margin(rep(20, 4))
+)
+
+theme_flip <-
+  theme(
+    axis.text.x = element_text(face = "plain", family = "Roboto Mono", size = 22),
+    axis.text.y = element_text(face = "bold", family = "Roboto", size = 26),
+    panel.grid.major.x = element_line(color = "grey90", size = .6),
+    panel.grid.major.y = element_blank(),
+    legend.position = "top", 
+    legend.text = element_text(family = "Roboto Mono", size = 18),
+    legend.title = element_text(face = "bold", size = 18, margin = margin(b = 25))
+  )
+
+my_pal <- rcartocolor::carto_pal(n = 8, name = "Bold")[c(1, 3, 7, 2)]
+```
+
+
+## Summary Plots
+
+### Barplot
+
+```{r barplot-mean}
+my_pal <- rcartocolor::carto_pal(n = 8, name = "Bold")[c(1, 3, 7, 2)]
+
+ggplot(data, aes(x = group, y = value, fill = group)) +
+  geom_bar(stat = "summary", width = .8) +
+  scale_y_continuous(expand = c(0, 0), breaks = 0:4) + 
+  scale_fill_manual(values = my_pal, guide = "none") + 
+  labs(y = "Mean value") +
+  theme(axis.title.y = element_text(color = "black", face = "bold", size = 26, 
+                                    margin = margin(r = 15), angle = 90))
+```
+
+> Most data are not as clean as bar plots make them seem, and since bar plots reveal very little about the distribution of the data, this kind of visualization can be misleading. A further issue is that of the bar itself, which implies that the base of the y-axis is meaningful, which is not necessarily the case. ~ #barbarplot intiative
+
+```{r barplot-count}
+ggplot(data, aes(x = group, fill = group)) +
+  geom_bar(width = .8) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values = my_pal, guide = "none") + 
+  labs(y = "Number of observations") +
+  theme(axis.title.y = element_text(color = "black", face = "bold", size = 26, 
+                                    margin = margin(r = 15), angle = 90))
+```
+
+### Dynamite Plot
+
+> Dynamite plots are used to compare measurements from two or more groups: cases and controls, for example. In a two group comparison, the plots are graphical representations of a grand total of 4 numbers, regardless of the sample size. The four numbers are the average and the standard error (or the standard deviation, it’s not always clear) for each group. ~ Rafael Irizarry, *"Dynamite Plots Must Die"*
+
+```{r dynamite-plot}
+ggplot(data, aes(x = group, y = value, color = group, fill = group)) +
+  stat_summary(
+    geom = "errorbar",
+    fun.max = function(x) mean(x) + sd(x),
+    fun.min = function(x) mean(x) - sd(x),
+    width = .3, size = 1.2
+  ) +
+  geom_bar(stat = "summary", width = .8, size = .8) +
+  scale_y_continuous(expand = c(0, 0), breaks = 1:9) +
+  scale_fill_manual(values = my_pal, guide = "none") +
+  scale_color_manual(values = my_pal, guide = "none") + 
+  labs(y = "Mean value") +
+  theme(axis.title.y = element_text(color = "black", face = "bold", size = 26, 
+                                    margin = margin(r = 15), angle = 90))
+```
+
+### Boxplot
+
+```{r object}
+g <- ggplot(data, aes(x = group, y = value, color = group, fill = group)) +
+  scale_y_continuous(breaks = 1:9) +
+  scale_color_manual(values = my_pal, guide = "none") +
+  scale_fill_manual(values = my_pal, guide = "none")
+```
+
+```{r boxplot-alpha}
+g + 
+  geom_boxplot(
+    aes(fill = group), alpha = .5,
+    size = 1.5, outlier.size = 5
+  )
+```
+
+```{r boxplot-afterscale}
+g + 
+  geom_boxplot(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.5, outlier.size = 5
+  )
+```
+
+> While box plots are highly effective and widely used in data analytics, they are limited in the fact that they only show specific statistical points, such as the median average or outliers, rather than the distribution of a data set as a whole. ~ LondonSoda.com
+
+### Violin Plot
+
+> Violin plots focus on illustrating the distribution of the entire data set and can generate different insights, that are hidden in the structure of box plots. ~ LondonSoda.com
+
+```{r violin-area}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2
+  )
+```
+
+```{r violin-bandwidth}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .2
+  )
+```
+
+```{r violin-bandwidth-8}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .8
+  )
+```
+
+```{r violin-bandwidth-05}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .05
+  )
+```
+```{r violin-count}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .2, scale = "count"
+  )
+```
+
+```{r violin-halfeye-raw}
+g + 
+  ggdist::stat_halfeye(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7)))
+  )
+```
+
+```{r violin-halfeye}
+g + 
+  ggdist::stat_halfeye(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+    adjust = .2, position = position_nudge(x = -.3)
+  )
+```
+
+```{r violin-halfeye-adj}
+g + 
+  ggdist::stat_halfeye(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+    .width = 1, point_size = 5, adjust = .2, position = position_nudge(x = -.3)
+  )
+```
+
+### Ridgeline Plot
+
+> Ridgeline plots are partially overlapping line plots that create the impression of a mountain range. They can be quite useful for visualizing changes in distributions over time or space. ~ {ggridges} reference
+
+```{r ridgeline}
+g_ridges <- 
+  ggplot(data, aes(value, fct_rev(group), color = group, fill = group)) + 
+  coord_cartesian(clip = "off") +
+  scale_y_discrete(expand = c(.07, .07)) +
+  scale_color_manual(values = my_pal, guide = "none") +
+  scale_fill_manual(values = my_pal, guide = "none") +
+  theme_flip
+
+g_ridges +
+  ggridges::geom_density_ridges(
+    alpha = .7, size = 1.5
+  )
+```
+
+```{r ridgeline-cut}
+g_ridges +
+  ggridges::geom_density_ridges(
+    alpha = .8, size = 1.5, 
+    rel_min_height = 0.01
+  )
+```
+
+```{r ridgeline-gradient, include=FALSE}
+g_ridges + 
+  ggridges::geom_density_ridges_gradient(
+    aes(fill = stat(x)), color = "black",
+    size = 1.5, rel_min_height = 0.01
+  ) +
+  scale_fill_viridis_c(
+    option = "mako", direction = -1, guide = "none", end = .9
+  )
+```
+
+```{r ridgeline-median}
+g_ridges + 
+  ggridges::stat_density_ridges(
+    quantile_lines = TRUE, quantiles = 2, 
+    color = "black", alpha = .8, size = 1.5
+  ) 
+```
+
+```{r ridgeline-quartiles}
+g_ridges + 
+  ggridges::stat_density_ridges(
+    aes(fill = factor(stat(quantile))),
+    geom = "density_ridges_gradient", calc_ecdf = TRUE,
+    quantiles = 4, 
+    color = "black", alpha = .8, size = 1
+  ) +
+  rcartocolor::scale_fill_carto_d(
+    palette = "Geyser", name = "Quartile:"
+  ) +
+  guides(fill = guide_legend(override.aes = list(color = "transparent")))
+```
+
+```{r ridgeline-tails}
+g_ridges + 
+  ggridges::stat_density_ridges(
+    aes(fill = factor(stat(quantile))),
+    geom = "density_ridges_gradient", calc_ecdf = TRUE,
+    quantiles = c(0.025, 0.975),
+    color = "black", size = 1.5
+  ) +
+  scale_fill_manual(
+    name = "Probability:", values = c("#994c00", "grey70", "#003366"),
+    labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
+  ) +
+  guides(fill = guide_legend(override.aes = list(color = "transparent")))
+```
+
+### Interval strips
+
+```{r interval-strips-raw}
+g_interval <- 
+  ggplot(data, aes(group, value)) +
+  scale_color_viridis_d(
+    option = "mako", name = "Level:", direction = -1, 
+    begin = .15, end = .9
+  ) +
+  guides(
+    color = guide_legend(reverse = TRUE, title.position = "top")
+  ) +
+  theme(
+    legend.position = c(.75, .95), legend.direction = "horizontal",
+    legend.text = element_text(family = "Roboto Mono", size = 18),
+    legend.title = element_text(face = "bold", size = 22, hjust = .5)
+  )
+
+g_interval +
+  ggdist::stat_interval(size = 12)
+```
+
+```{r interval-strips}
+g_interval +
+  ggdist::stat_interval(.width = c(.25, .5, .95, 1), size = 12)
+```
+
+```{r interval-strips-percent}
+g_interval +
+  ggdist::stat_interval(.width = c(.25, .5, .95, 1), size = 12) +
+  scale_color_viridis_d(
+    option = "mako", name = "Level:", direction = -1, 
+    begin = .15, end = .9,
+    labels = function(x) paste0(as.numeric(x)*100, "%")
+  )
+```
+
+```{r interval-strips-median}
+g_interval +
+  ggdist::stat_interval(.width = c(.25, .5, .95, 1), size = 12) +
+  stat_summary(
+    geom = "point", fun = median,
+    color = "white", size = 6, shape = 1, stroke = 1.6
+  ) +
+  scale_color_viridis_d(
+    option = "mako", name = "Level:", direction = -1, 
+    begin = .15, end = .9,
+    labels = function(x) paste0(as.numeric(x)*100, "%")
+  ) 
+```
+
+```{r interval-strips-density}
+g_interval +
+  ggdist::stat_interval(
+    .width = c(.25, .5, .95, 1), 
+    size = 7
+  ) +
+  ggdist::stat_halfeye(
+    adjust = .33, ## bandwidth
+    width = .7, fill = "grey85",
+    interval_colour = NA, point_colour = "black",
+    shape = 23, stroke = 1.5, point_size = 5, point_fill = "white",
+    position = position_nudge(x = .03)
+  ) +
+  scale_color_viridis_d(
+    option = "mako", name = "Level:", direction = -1, 
+    begin = .15, end = .9,
+    labels = function(x) paste0(as.numeric(x)*100, "%")
+  )
+```
+
+### Gradient Interval
+
+```{r gradient-interval}
+g +
+  ggdist::stat_gradientinterval(
+    width = .3, color = "black"
+  )
+```
+
+
+## Raw Data Charts
+
+### Scatter Plot (Strip Chart)
+
+```{r dotstrips}
+g + geom_point(size = 10, alpha = .33)
+```
+
+### Barcode Plots (Strip Chart)
+
+```{r barcode}
+g + geom_point(shape = 95, size = 50, alpha = .33)
+```
+
+### Jitter Strip Chart
+
+```{r jitter-a}
+g + geom_jitter(size = 7, alpha = .5)
+```
+
+```{r jitter-b}
+g + 
+  geom_point(
+    position = position_jitter(width = .2, seed = 0),
+    size = 7, alpha = .5
+  )
+```
+
+```{r jitter-outline}
+g + 
+  geom_point(
+    position = position_jitter(width = .2, seed = 0),
+    size = 7, alpha = .5
+  ) +
+  geom_point(
+    position = position_jitter(width = .2, seed = 0),
+    size = 7, stroke = .9, shape = 1, color = "black"
+  )
+```
+
+### Sina Plot
+
+> The sina plot is a data visualization chart suitable for plotting any single variable in a multiclass dataset. It is an enhanced jitter strip chart, where the width of the jitter is controlled by the density distribution of the data within each class. ~ {ggforce} reference
+
+```{r sina}
+g + 
+  ggforce::geom_sina(
+    maxwidth = .6, scale = "count", seed = 1,
+    size = 7, alpha = .5
+  ) + 
+  ggforce::geom_sina(
+    maxwidth = .6, scale = "count", seed = 1, 
+    size = 7, shape = 1, color = "black", stroke = .8
+  )
+```
+
+### Dot Plot
+
+> A dot plot or dot chart is a statistical chart consisting of data points plotted on a fairly simple scale, typically using filled in circles. There are two common versions of the dot chart. The first is described by Leland Wilkinson as a graph that has been used in hand-drawn (pre-computer era) graphs to depict distributions. The other version is described by William Cleveland as an alternative to the bar chart, in which dots are used to depict the quantitative values (e.g. counts) associated with categorical variables. ~ datavizproject.com
+
+```{r dotplot}
+g + 
+  ggdist::stat_dots(position = position_nudge(x = -.25))
+```
+
+```{r dotplot-symmetrical}
+g + 
+  ggdist::stat_dots(side = "both")
+```
+
+```{r dotplot-off-axis}
+g + 
+  ggdist::stat_dots(layout = "weave", position = position_nudge(x = -.25))
+```
+
+### Beeswarm Plot
+
+```{r beeswarm-ggdist}
+g + 
+  ggdist::stat_dots(layout = "swarm", side = "both")
+```
+
+```{r beeswarm-ggbeeswarm}
+g + 
+  ggbeeswarm::geom_beeswarm(size = 8, cex = 3)
+```
+
+```{r beeswarm-ggbeeswarm-quasi}
+g + 
+  ggbeeswarm::geom_quasirandom(size = 8, width = .33, alpha = .7) + 
+  ggbeeswarm::geom_quasirandom(size = 8, width = .33, shape = 1, color = "black", stroke = .8)
+```
+
+## Hybrid Charts
+
+### Beeswarm with Median Indicator
+
+```{r beeswarm-median}
+g + 
+  ggbeeswarm::geom_quasirandom(
+    size = 8, width = .33, alpha = .3
+  ) +
+  stat_summary(
+    fun = median, geom = "point", 
+    shape = 95, size = 50
+  ) + 
+  ggbeeswarm::geom_quasirandom(
+    size = 8, width = .33, shape = 1, color = "black", stroke = .8
+  )
+```
+
+### Box Plot x Jitter Strips
+
+```{r boxplot-jitter}
+g + 
+  geom_boxplot(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+    size = 1.5, outlier.shape = NA
+  ) +
+  geom_jitter(width = .1, size = 7, alpha = .5)
+```
+
+```{r boxplot-jitter-outlines}
+g + 
+  geom_boxplot(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+    size = 1.5, outlier.shape = NA
+  ) +
+  geom_point(
+    position = position_jitter(width = .1, seed = 0),
+    size = 7, alpha = .5
+  ) +
+  geom_point(
+    position = position_jitter(width = .1, seed = 0),
+    size = 7, stroke = .9, shape = 1, color = "white"
+  )
+```
+
+### Box Plot x Violin Plot
+
+```{r violin-boxplot-raw}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .2
+  ) + 
+  geom_boxplot(
+    fill = "white",  size = 1.2, width = .2, outlier.size = 5
+  )
+```
+
+```{r violin-boxplot}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .2
+  ) + 
+  geom_boxplot(
+    fill = "white",  size = 1.2, width = .2, 
+    outlier.shape = NA, coef = 0
+  )
+```
+
+```{r violin-boxplot-styled}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .2, color = NA
+  ) +
+  geom_boxplot(
+    width = .1, size = 1.2, outlier.shape = NA
+  ) +
+  stat_summary(
+    geom = "point",
+    fun = median,
+    color = "white",
+    size = 5
+  )
+```
+
+### Box Plot x Violin Plot x Jitter Strips
+
+```{r violin-boxplot-jitter}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .2
+  ) + 
+  geom_boxplot(
+    fill = "white",  size = 1.2, width = .2, 
+    outlier.shape = NA, coef = 0
+  ) +
+  geom_point(
+    position = position_jitter(width = .03, seed = 0),
+    size = 5, alpha = .5
+  ) +
+  geom_point(
+    position = position_jitter(width = .03, seed = 0),
+    size = 5, stroke = .7, shape = 1, color = "black"
+  )
+```
+
+### Box Plot x Violin Plot x Beeswarm Plot
+
+```{r violin-boxplot-beeswarm, include=FALSE}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .5))),
+    size = 1.2, bw = .2
+  ) + 
+  geom_boxplot(
+    fill = "white",  size = 1.2, width = .2, 
+    outlier.shape = NA, coef = 0
+  ) + 
+  ggdist::stat_dots(
+    layout = "swarm", side = "both", 
+    stackratio = .25, dotsize = .1, 
+    alpha = .5
+  ) + 
+  ggdist::stat_dots(
+    layout = "swarm", side = "both",
+    stackratio = .25, dotsize = .1,
+    shape = 1, color = "black", stroke = .8
+  )
+```
+
+
+### Violin Plot x Sina Plots
+
+```{r violin-count-sina}
+g + 
+  geom_violin(
+    aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+    size = 1.2, bw = .2, width = .6, scale = "count"
+  ) +
+  stat_summary(
+    geom = "point", 
+    fun = median,
+    shape = 23, size = 6, color = "black", stroke = 1.5
+  ) + 
+  ggforce::geom_sina(
+    maxwidth = .5, scale = "count", 
+    size = 3, alpha = .5, seed = 0
+  ) + 
+  ggforce::geom_sina(
+    maxwidth = .5, scale = "count", 
+    size = 3, alpha = .5, seed = 0,
+    shape = 1, color = "black", stroke = .8
+  )
+```
+
+## Raincloud Plots
+
+> A data visualization approach which [provides] maximal statistical information while preserving the desired ‘inference at a glance’ nature of barplots and other similar visualization devices. These “raincloud plots” can visualize raw data, probability density, and key summary statistics such as median, mean, and relevant confidence intervals in an appealing and flexible format with minimal redundancy. ~ Allen et al. (2021) Wellcome Open Res 4:63
+
+```{r raincloud}
+g + 
+  geom_boxplot(
+    width = .2, fill = "white",
+    size = 1.5, outlier.shape = NA
+  ) +
+  ggdist::stat_halfeye(
+    adjust = .33, ## bandwidth
+    width = .67, 
+    color = NA, ## remove slab interval
+    position = position_nudge(x = .15)
+  ) +
+  gghalves::geom_half_point(
+    side = "l", 
+    range_scale = .3, 
+    alpha = .5, size = 3
+  )
+```
+
+```{r raincloud-flip, fig.height = 10}
+ggplot(data, aes(x = forcats::fct_rev(group), y = value, 
+                 color = group, fill = group)) +
+  geom_boxplot(
+    width = .2, fill = "white",
+    size = 1.5, outlier.shape = NA
+  ) +
+  ggdist::stat_halfeye(
+    adjust = .33,
+    width = .67, 
+    color = NA,
+    position = position_nudge(x = .15)
+  ) +
+  gghalves::geom_half_point(
+    side = "l", 
+    range_scale = .3, 
+    alpha = .5, size = 3
+  ) +
+  coord_flip() +
+  scale_x_discrete(expand = c(.07, .07)) +
+  scale_y_continuous(breaks = 1:9) +
+  scale_color_manual(values = my_pal, guide = "none") +
+  scale_fill_manual(values = my_pal, guide = "none") +
+  theme_flip
+```
+
+```{r raincloud-barcode}
+g + 
+  geom_boxplot(
+    width = .2, fill = "white",
+    size = 1.5, outlier.shape = NA
+  ) +
+  ggdist::stat_halfeye(
+    adjust = .33, 
+    width = .55, 
+    color = NA, 
+    position = position_nudge(x = .14)
+  ) +
+  geom_point(
+    position = position_nudge(x = -.22),
+    shape = 95, size = 24, alpha = .25
+  )
+```
+
+***
+
+<details><summary>Session Info</summary>
+
+```{r sessionInfo}
+Sys.time()
+sessionInfo()
+```
+
+</details>
