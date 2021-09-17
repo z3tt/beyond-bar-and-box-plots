@@ -47,6 +47,13 @@ data <- read_csv(url)
 
 ## ggplot2 Setup
 
+To use a custom font, one needs to install the .ttf or .otf font files on the local machine.
+Here I am using the well-known Roboto typefaces that are available via GoogleFonts:  
+* [Roboto](https://fonts.google.com/specimen/Roboto?query=roboto)  
+* [Roboto Mono](https://fonts.google.com/specimen/Roboto?query=roboto+mono)
+
+(In case you can't install the fonts, you might see some warnings that you can ignore. In case it throws an error, remove all arguments related to fonts, i.e. `family` and `base_family` arguments.)
+
 ```{r}
 ## general theme
 theme_set(theme_void(base_family = "Roboto"))
@@ -129,10 +136,7 @@ g <- ggplot(data, aes(x = group, y = value, color = group, fill = group)) +
 
 ```{r boxplot-alpha}
 g + 
-  geom_boxplot(
-    aes(fill = group), alpha = .5,
-    size = 1.5, outlier.size = 5
-  )
+  geom_boxplot(alpha = .5, size = 1.5, outlier.size = 5)
 ```
 
 ```{r boxplot-afterscale}
