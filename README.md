@@ -27,7 +27,7 @@ Slides and hands-on codes for my talk at the [USGS Community for Data Integratio
 * [Slides](https://www.cedricscherer.com/slides/USGS-2021-beyond-bar-and-box-plots.pdf)
 * [Hands-On Tutorial](https://z3tt.github.io/beyond-bar-and-box-plots)
 * [Codes](https://github.com/z3tt/beyond-bar-and-box-plots/blob/main/BeyondBarAndBoxPlots.Rmd)
-* Recording **TBA**
+* [Recording](https://www.youtube.com/watch?v=WBA04fjTVU0)
 
 ![Teaser for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/teaser.png)
  
