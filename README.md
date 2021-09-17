@@ -20,7 +20,7 @@
 
 Slides and hands-on codes for my talk at the [USGS Community for Data Integration](https://twitter.com/USGS_CDI) and [USGS Data Science Team](https://www.usgs.gov/mission-areas/water-resources/science/data-science-water-resources?qt-science_center_objects=0#qt-science_center_objects) on September, 16 2021.
 
-![Title slide for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/title.png)
+![Title slide for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/_title.png)
 
 ### Talk Resources:
 
@@ -29,12 +29,11 @@ Slides and hands-on codes for my talk at the [USGS Community for Data Integratio
 * [Codes](https://github.com/z3tt/beyond-bar-and-box-plots/blob/main/BeyondBarAndBoxPlots.Rmd)
 * [Recording](https://www.youtube.com/watch?v=WBA04fjTVU0)
 
-![Teaser for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/teaser.png)
- 
+![Teaser for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/_teaser.png)
+
 ***
 
 <h4>Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</h4>
 <div style="width:300px; height:200px">
 <img src=https://camo.githubusercontent.com/00f7814990f36f84c5ea74cba887385d8a2f36be/68747470733a2f2f646f63732e636c6f7564706f7373652e636f6d2f696d616765732f63632d62792d6e632d73612e706e67 alt="" height="42">
 </div>
-
