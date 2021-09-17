@@ -279,6 +279,21 @@ g_ridges +
   guides(fill = guide_legend(override.aes = list(color = "transparent")))
 ```
 
+```{r ridgeline-quartiles-bw}
+g_ridges + 
+  ggridges::stat_density_ridges(
+    aes(fill = factor(stat(quantile))),
+    geom = "density_ridges_gradient", calc_ecdf = TRUE,
+    quantiles = 4, 
+    color = "black", size = 1,
+    bandwidth = .1
+  ) +
+  scale_fill_manual(values = q_pal, name = "Quartile:") +
+  guides(fill = guide_legend(override.aes = list(color = "transparent")))
+```
+
+(Note that now it's clearly visible that the quantile lines are off, at leastc for the group D with the low sample size.)
+
 ```{r ridgeline-tails}
 g_ridges + 
   ggridges::stat_density_ridges(
