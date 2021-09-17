@@ -49,6 +49,7 @@ data <- read_csv(url)
 
 To use a custom font, one needs to install the .ttf or .otf font files on the local machine.
 Here I am using the well-known Roboto typefaces that are available via GoogleFonts:  
+
 * [Roboto](https://fonts.google.com/specimen/Roboto?query=roboto)  
 * [Roboto Mono](https://fonts.google.com/specimen/Roboto?query=roboto+mono)
 
