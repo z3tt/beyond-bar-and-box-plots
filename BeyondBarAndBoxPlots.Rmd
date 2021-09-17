@@ -39,11 +39,14 @@ library(systemfonts)   ## custom fonts
 
 ## Import Data
 
+We are using a synthetic data set consisting of four groups with differing sample sizes and diustributions of some values.
+
 ```{r data}
 url <- "https://raw.githubusercontent.com/z3tt/DataViz-Teaching/master/data/weissgerber-data.csv"
 data <- read_csv(url)
 ```
 
+The data was generated with the code provided in the [flipbook by Nico Riedel, Robert Schulz, and Tracey Weissgerber](https://osf.io/vt2ny/).
 
 ## ggplot2 Setup
 
