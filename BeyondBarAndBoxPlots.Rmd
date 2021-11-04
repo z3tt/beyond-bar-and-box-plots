@@ -21,6 +21,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
 Sys.setlocale("LC_TIME", "C")
 ```
 
+<b style='font-size:13pt;'>The slides are available <a href='https://www.cedricscherer.com/slides/USGS-2021-beyond-bar-and-box-plots.pdf'  target="_blank">here</a>.</b><br>
+<b style='font-size:13pt;'>Alternatively, you can <a href='https://www.youtube.com/watch?v=WBA04fjTVU0'  target="_blank">watch the recording on YouTube</a>.</b>
 
 ## Packages
 
@@ -292,7 +294,9 @@ g_ridges +
   guides(fill = guide_legend(override.aes = list(color = "transparent")))
 ```
 
-(Note that now it's clearly visible that the quantile lines are off, at leastc for the group D with the low sample size.)
+(Note that the quartile lines can become potentially misleading due to low sample sizes. Both quartiles and densities are mathematically correct given the input data, and both fail at providing a useful representation of the data. See [Claus Wilke's tweet for more](https://twitter.com/ClausWilke/status/1438883513919545351).)
+
+
 
 ```{r ridgeline-tails}
 g_ridges + 
@@ -371,7 +375,8 @@ g_interval +
     width = .7, fill = "grey85",
     interval_colour = NA, point_colour = "black",
     shape = 23, stroke = 1.5, point_size = 5, point_fill = "white",
-    position = position_nudge(x = .03)
+    position = position_nudge(x = .03),
+    aes(thickness = stat(f*n))
   ) +
   scale_color_viridis_d(
     option = "mako", name = "Level:", direction = -1, 
