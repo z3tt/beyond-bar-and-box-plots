@@ -28,8 +28,11 @@ Slides and hands-on codes for my talk at the [USGS Community for Data Integratio
 * [Hands-On Tutorial](https://z3tt.github.io/beyond-bar-and-box-plots)
 * [Codes](https://github.com/z3tt/beyond-bar-and-box-plots/blob/main/BeyondBarAndBoxPlots.Rmd)
 * [Recording](https://www.youtube.com/watch?v=WBA04fjTVU0)
-<br>
+
+<br>  
+
 ![Quote by F.J. Anscombe](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/_anscombe.png)
+<br><br>
 ![Teaser for my talk](https://raw.githubusercontent.com/z3tt/beyond-bar-and-box-plots/main/img/_teaser.png)
 
 ***
